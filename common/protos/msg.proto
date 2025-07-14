@@ -1,0 +1,200 @@
+syntax = "proto3";
+
+package msgpb2;
+
+// Task-related messages
+message Task {
+    enum TaskType {
+        TASK_TYPE_FULL = 0;
+        TASK_TYPE_DELTA = 1;
+    }
+
+    string message_id = 1;
+    int64 message_time = 2;
+    string task_id = 3;
+    TaskType task_type = 4;
+    repeated SourceDetail sources = 5;
+    int64 deadline = 6;
+    bool cancelled = 7;
+    string project_name = 8;
+    string focus = 9;
+    map<string, string> metadata = 10;  // String to string map for traceability data
+}
+
+enum BuildType {
+    FUZZER = 0;
+    COVERAGE = 1;
+    TRACER_NO_DIFF = 2;
+    PATCH = 3;
+}
+
+message SourceDetail {
+    enum SourceType {
+        SOURCE_TYPE_REPO = 0;
+        SOURCE_TYPE_FUZZ_TOOLING = 1;
+        SOURCE_TYPE_DIFF = 2;
+    }
+
+    string sha256 = 1;
+    SourceType source_type = 2;
+    string url = 3;
+}
+
+message TaskDownload {
+    Task task = 1;
+}
+
+message TaskReady {
+    Task task = 1;
+}
+
+message TaskDelete {
+    oneof delete_option {
+        string task_id = 1;
+        bool all = 3;
+    }
+    float received_at = 2;
+}
+
+// Fuzzer-related messages
+message BuildRequest {
+    string engine = 1;
+    string sanitizer = 2;
+    string task_dir = 3;
+    string task_id = 4;
+    BuildType build_type = 5;
+    // If true, apply the Challenge Task diff before building (for delta-mode)
+    bool apply_diff = 6;
+    // Extra patch to apply to the task directory before building
+    string patch = 7;
+    // A unique identifier for the patch.
+    // It can be used to match the BuildRequest and the BuildOutput.
+    string internal_patch_id = 8;
+}
+
+message BuildOutput {
+    string engine = 1;
+    string sanitizer = 2;
+    string task_dir = 3;
+    string task_id = 4;
+    BuildType build_type = 5;
+    bool apply_diff = 6;
+    // A unique identifier for the patch, coming from the BuildRequest.
+    string internal_patch_id = 7;
+}
+
+message WeightedHarness {
+    float weight = 1;
+    string package_name = 2;
+    string harness_name = 3;
+    string task_id = 4;
+}
+
+message Crash {
+    BuildOutput target = 1;
+    string harness_name = 2;
+    string crash_input_path = 3;
+    string stacktrace = 4;
+    string crash_token = 5;
+} 
+
+message TracedCrash {
+    Crash crash = 1;
+    string tracer_stacktrace = 2;
+}
+
+message ConfirmedVulnerability {
+    repeated TracedCrash crashes = 1;
+    string internal_patch_id = 2;
+}
+
+message Patch {
+    string task_id = 1;
+    string internal_patch_id = 2;
+    string patch = 3;
+}
+
+message IndexRequest {
+    BuildType build_type = 1;
+    string package_name = 2;
+    string sanitizer = 3;
+    string task_dir = 4;
+    string task_id = 5;
+}
+
+message IndexOutput {
+    BuildType build_type = 1;
+    string package_name = 2;
+    string sanitizer = 3;
+    string task_dir = 4;
+    string task_id = 5;
+}
+
+message FunctionCoverage {
+    string function_name = 1;
+    repeated string function_paths = 2;
+    int32 total_lines = 3;
+    int32 covered_lines = 4;
+}
+
+enum SubmissionResult {
+    NONE = 0;  // Default/unset state - no submission result yet
+    ACCEPTED = 1;
+    PASSED = 2;
+    FAILED = 3;
+    DEADLINE_EXCEEDED = 4;
+    ERRORED = 5;
+    INCONCLUSIVE = 6;
+}
+
+message SubmissionEntryPatch {
+    string patch = 1;
+    string internal_patch_id = 2;
+    string competition_patch_id = 3;
+    repeated BuildOutput build_outputs = 4;
+    optional SubmissionResult result = 5;
+}
+
+
+message Bundle {
+    string task_id = 1;
+    string competition_pov_id = 2;
+    string competition_patch_id = 3;
+    string competition_sarif_id = 4;
+    string bundle_id = 5;
+}
+
+message CrashWithId {
+    TracedCrash crash = 1;
+    string competition_pov_id = 2;
+    optional SubmissionResult result = 3;
+}
+
+// This is our model of a Challenge Vulnerability
+message SubmissionEntry {
+    bool stop = 1;
+
+    repeated CrashWithId crashes = 2;
+
+    repeated Bundle bundles = 3;
+
+    // Content of patches targeting this vulnerability 
+    repeated SubmissionEntryPatch patches = 4;
+
+    // Current patch being considered
+    int32 patch_idx = 5;
+    int32 patch_submission_attempts = 6;
+}
+
+message POVReproduceRequest {
+    string task_id = 1;
+    string internal_patch_id = 2;
+    string harness_name = 3;
+    string sanitizer = 4;
+    string pov_path = 5;
+}
+
+message POVReproduceResponse {
+    POVReproduceRequest request = 1;
+    bool did_crash = 2;
+}

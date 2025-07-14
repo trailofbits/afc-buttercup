@@ -1,0 +1,113 @@
+model_list:
+  - model_name: azure-gpt-4o
+    litellm_params:
+      model: azure/gpt-4o # Name defined in Azure Deployment
+      api_base: os.environ/AZURE_API_BASE
+      api_key: os.environ/AZURE_API_KEY
+      tpm: 30000
+      rpm: 1800
+
+  - model_name: azure-gpt-4o-mini
+    litellm_params:
+      model: azure/gpt-4o-mini # Name defined in Azure Deployment
+      api_base: os.environ/AZURE_API_BASE
+      api_key: os.environ/AZURE_API_KEY
+      tpm: 50000
+      rpm: 5000
+
+  - model_name: azure-o3-mini
+    litellm_params:
+      model: azure/o3-mini # Name defined in Azure Deployment
+      api_base: os.environ/AZURE_API_BASE
+      api_key: os.environ/AZURE_API_KEY
+      api_version: 2024-12-01-preview
+      tpm: 50000
+      rpm: 50
+
+  - model_name: azure-o1
+    litellm_params:
+      model: azure/o1 # Name defined in Azure Deployment
+      api_base: os.environ/AZURE_API_BASE
+      api_key: os.environ/AZURE_API_KEY
+      api_version: 2024-12-01-preview
+      tpm: 30000
+      rpm: 50
+
+  - model_name: openai-gpt-4o
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+      tpm: 30000000
+      rpm: 10000
+
+  - model_name: openai-gpt-4o-mini
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+      tpm: 150000000
+      rpm: 30000
+
+  - model_name: openai-o3-mini
+    litellm_params:
+      model: openai/o3-mini
+      api_key: os.environ/OPENAI_API_KEY
+      tpm: 150000000
+      rpm: 30000
+
+  - model_name: openai-o1
+    litellm_params:
+      model: openai/o1
+      api_key: os.environ/OPENAI_API_KEY
+      tpm: 30000000
+      rpm: 10000
+
+  - model_name: openai-o3
+    litellm_params:
+      model: openai/o3
+      api_key: os.environ/OPENAI_API_KEY
+      tpm: 30000000
+      rpm: 10000
+
+  - model_name: openai-gpt-4.1
+    litellm_params:
+      model: openai/gpt-4.1
+      api_key: os.environ/OPENAI_API_KEY
+      tpm: 30000000
+      rpm: 10000
+
+  - model_name: openai-gpt-4.1-mini
+    litellm_params:
+      model: openai/gpt-4.1-mini
+      api_key: os.environ/OPENAI_API_KEY
+      tpm: 150000000
+      rpm: 30000
+
+  - model_name: openai-gpt-4.1-nano
+    litellm_params:
+      model: openai/gpt-4.1-nano
+      api_key: os.environ/OPENAI_API_KEY
+      tpm: 150000000
+      rpm: 30000
+
+  - model_name: claude-3.5-sonnet
+    litellm_params:
+      model: anthropic/claude-3-5-sonnet-20241022
+      api_key: os.environ/ANTHROPIC_API_KEY
+      tpm: 400000
+      rpm: 4000
+
+  - model_name: claude-3.7-sonnet
+    litellm_params:
+      model: anthropic/claude-3-7-sonnet-20250219
+      api_key: os.environ/ANTHROPIC_API_KEY
+      tpm: 125000
+      rpm: 6250
+
+  - model_name: claude-4-sonnet
+    litellm_params:
+      model: anthropic/claude-sonnet-4-20250514
+      api_key: os.environ/ANTHROPIC_API_KEY
+      tpm: 400000
+
+general_settings:
+  master_key: os.environ/BUTTERCUP_LITELLM_KEY

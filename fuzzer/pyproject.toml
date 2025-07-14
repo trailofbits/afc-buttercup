@@ -1,0 +1,61 @@
+[project]
+name = "fuzzing-infra"
+version = "0.1.0"
+description = ""
+authors = [{ name = "Trail of Bits", email = "opensource@trailofbits" }]
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "protobuf (>=3.20, <=3.20.3)",
+    "redis (>=5.2.1,<6.0.0)",
+    "clusterfuzz==2.6.0",
+    "common",
+    "pydantic-settings>=2.7.1",
+    "beautifulsoup4>=4.13.3",
+    "lxml>=5.3.1",
+]
+
+[project.scripts]
+buttercup-fuzzer-builder = "buttercup.fuzzing_infra.builder_bot:main"
+buttercup-fuzzer = "buttercup.fuzzing_infra.fuzzer_bot:main"
+buttercup-coverage-bot = "buttercup.fuzzing_infra.coverage_bot:main"
+buttercup-tracer-bot = "buttercup.fuzzing_infra.tracer_bot:main"
+buttercup-corpus-sync = "buttercup.fuzzing_infra.corpus_sync:main"
+buttercup-corpus-merger = "buttercup.fuzzing_infra.corpus_merger:main"
+buttercup-fuzzer-utils = "buttercup.fuzzing_infra.utils_cli:main"
+
+[tool.uv.sources]
+common = { path = "../common", editable = true }
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/buttercup"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pytest>=8.3.4", "ruff>=0.9.2", "mypy>=1.15.0"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.mypy]
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+packages = "buttercup"
+allow_redefinition = true
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+no_implicit_optional = true
+show_error_codes = true
+sqlite_cache = true
+strict_equality = true
+warn_no_return = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+exclude = []
